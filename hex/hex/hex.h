@@ -48,6 +48,7 @@ public:
 	bool makeMove(Point p, Color c);
 	bool setSquare(int n, Color c);
 
+	friend std::ostream& operator<<(std::ostream& out, const Board& b);
 };
 
 // Hex ADT
@@ -64,9 +65,10 @@ private:
 	Board m_board;
 public:
 	Hex(int size) : m_size{size}, m_graph{size}, m_board{size} {}
-	bool makeMove(Point p, Color c) { return m_board.makeMove(p, c); }
+	bool winner();
+	bool play();
+	Point getMove();
 
-	friend std::ostream& operator<<(std::ostream& out, const Hex& h);
 };
 
 
