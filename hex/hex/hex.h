@@ -37,14 +37,17 @@ public:
 		// We start with all the squares being unoccuppied.
 		m_squares.assign(m_size*m_size, Color::COLOR_BLANK);
 	}
-	int get_node(Point p) { return std::get<0>(p) * m_size + std::get<1>(p); }
-	Point get_square(int n) { return Point(n / m_size, n % m_size); }
+	int get_node(Point p) const { return std::get<0>(p) * m_size + std::get<1>(p); }
+	Point get_square(int n) const { return Point(n / m_size, n % m_size); }
 	bool isCorner(const Point& p);
-	bool isBlank(int n) { return m_squares[n] == Color::COLOR_BLANK; }
-	bool isOccupied(int n) { return !isBlank(n); }
+	bool isBlank(int n) const { return m_squares[n] == Color::COLOR_BLANK; }
+	bool isOccupied(int n) const { return !isBlank(n); }
+	Color getColor(int n) const { return m_squares[n]; }
 	bool isWithinBoundary(Point p);
 	bool isAvailable(Point p);
 	bool makeMove(Point p, Color c);
+	bool setSquare(int n, Color c);
+
 };
 
 // Hex ADT
@@ -57,10 +60,13 @@ class Hex
 {
 private:
 	int m_size;
-	Graph m_graph{ m_size };
-	Board m_board{ m_size };
+	Graph m_graph;
+	Board m_board;
 public:
-	Hex(int size);
+	Hex(int size) : m_size{size}, m_graph{size}, m_board{size} {}
+	bool makeMove(Point p, Color c) { return m_board.makeMove(p, c); }
+
+	friend std::ostream& operator<<(std::ostream& out, const Hex& h);
 };
 
 
