@@ -29,9 +29,9 @@ namespace {
 		Board b(size);
 
 		EXPECT_TRUE(b.isCorner(Point(0, 0)));
-		EXPECT_FALSE(b.isCorner(Point(0, 9)));
-		EXPECT_FALSE(b.isCorner(Point(9, 0)));
-		EXPECT_FALSE(b.isCorner(Point(9, 9)));
+		EXPECT_TRUE(b.isCorner(Point(0, 9)));
+		EXPECT_TRUE(b.isCorner(Point(9, 0)));
+		EXPECT_TRUE(b.isCorner(Point(9, 9)));
 	}
 
 	TEST(BoardTest, TestNotCorner) {

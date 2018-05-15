@@ -11,42 +11,59 @@
 //  Traditional Header definitions here
 static const int DefaultBoardSize{ 11 };
 enum class Color : std::int8_t { COLOR_BLANK = 0, COLOR_BLUE = 1, COLOR_RED = 2 };
-typedef std::tuple<int, int> Point;
+typedef std::tuple<unsigned int, unsigned int> Point;
+typedef std::vector<std::vector<int>> Matrix;
 
-// Graph ADT
-class Graph
-{
+// Grapg ADT
+class Graph {
 private:
-	int m_size;
-	std::vector<std::vector<int>> m_matrix;
+    int m_size;
+    std::vector < std::vector<int>> m_matrix;
 public:
-	Graph(int size);
-	void addEdge(int i, int j, int cost = 1) { m_matrix[i][j] = cost; }
-	void delEdge(int i, int j) { m_matrix[i][j] = 0; }
+    Graph(int size);
+    void addEdge(int i, int j) { m_matrix[i][j] = m_matrix[j][i] = 1; }
 
+    friend std::ostream& operator<<(std::ostream& out, const Graph& g);
 };
 
+
+// Board ADT
 class Board
 {
 private:
 	int m_size;
-	std::vector<Color> m_squares;
+    Point m_last_user;
+    Point m_last_sim;
+    int m_num_of_turns;
+	std::vector<Color> m_nodes;
+    Graph m_graph;
+
 public:
-	Board(int size = DefaultBoardSize) : m_size{ size }
+    Board(int size = DefaultBoardSize) : m_size{ size }, m_num_of_turns{0},
+        m_last_sim{ Point{INT_MAX, INT_MAX} }, m_last_user{ Point{INT_MAX, INT_MAX} },
+        m_graph{ m_size*m_size }
 	{
-		// We start with all the squares being unoccuppied.
-		m_squares.assign(m_size*m_size, Color::COLOR_BLANK);
+		// We start with all the nodes being unoccuppied.
+		m_nodes.assign(m_size*m_size, Color::COLOR_BLANK);
 	}
 	int get_node(Point p) const { return std::get<0>(p) * m_size + std::get<1>(p); }
-	Point get_square(int n) const { return Point(n / m_size, n % m_size); }
+	Point get_point(int n) const { return Point(n / m_size, n % m_size); }
 	bool isCorner(const Point& p);
-	bool isBlank(int n) const { return m_squares[n] == Color::COLOR_BLANK; }
+    bool isTop(const Point& p) { return 0 == std::get<0>(p); }
+    bool isBottom(const Point& p) { return (m_size - 1) == std::get<0>(p); }
+    bool isLHS(const Point& p) { return 0 == std::get<1>(p); }
+    bool isRHS(const Point& p) { return (m_size - 1) == std::get<1>(p); }
+	bool isBlank(int n) const { return m_nodes[n] == Color::COLOR_BLANK; }
 	bool isOccupied(int n) const { return !isBlank(n); }
-	Color getColor(int n) const { return m_squares[n]; }
+	Color getColor(int n) const { return m_nodes[n]; }
+    void connect(int i, int j) { m_graph.addEdge(i, j); }
+	void setColor(int n, Color c) { m_nodes[n] = c; }
+    void setUserMove(Point p) { m_last_user = p; }
+    void setSimMove(Point p) { m_last_sim = p; }
 	bool isWithinBoundary(Point p);
 	bool isAvailable(Point p);
 	bool makeMove(Point p, Color c);
-	bool setSquare(int n, Color c);
+	void generate();
 
 	friend std::ostream& operator<<(std::ostream& out, const Board& b);
 };
@@ -61,13 +78,13 @@ class Hex
 {
 private:
 	int m_size;
-	Graph m_graph;
 	Board m_board;
 public:
-	Hex(int size) : m_size{size}, m_graph{size}, m_board{size} {}
+	Hex(int size) : m_size{size}, m_board{size} {}
 	bool winner();
-	bool play();
-	Point getMove();
+	void play();
+	Point getUserMove();
+	Point getComputerMove();
 
 };
 
