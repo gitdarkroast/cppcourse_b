@@ -39,13 +39,7 @@ private:
     Graph m_graph;
 
 public:
-    Board(int size = DefaultBoardSize) : m_size{ size }, m_num_of_turns{0},
-        m_last_sim{ Point{INT_MAX, INT_MAX} }, m_last_user{ Point{INT_MAX, INT_MAX} },
-        m_graph{ m_size*m_size }
-	{
-		// We start with all the nodes being unoccuppied.
-		m_nodes.assign(m_size*m_size, Color::COLOR_BLANK);
-	}
+    Board(int size);
 	int get_node(Point p) const { return std::get<0>(p) * m_size + std::get<1>(p); }
 	Point get_point(int n) const { return Point(n / m_size, n % m_size); }
 	bool isCorner(const Point& p);
