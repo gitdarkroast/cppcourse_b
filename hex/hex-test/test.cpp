@@ -7,9 +7,6 @@ namespace {
 	{
 	};
 
-	TEST(BoardTest, TestDefaultSize) {
-		EXPECT_TRUE(new Board());
-	}
 	TEST(BoardTest, TestSizeProvided) {
 		int size{ 10 };
 		EXPECT_TRUE(new Board(size));
